@@ -1,5 +1,5 @@
 Hotel Synergy (A complete hotel & restaurant management system)
-Licensed with MIT license.
+Licensed with MIT license
 
 Copyright (c) [2023] [Hari-Acharya]
 
