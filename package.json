@@ -1,0 +1,25 @@
+{
+  "name": "net.hotelsynergy.backend",
+  "version": "1.0.1",
+  "description": "Backend for hotel synergy.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hotel-synergy/backend.git"
+  },
+  "keywords": [
+    "Hotel",
+    "Restaurant",
+    "Management",
+    "System"
+  ],
+  "author": "Hari Acharya",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hotel-synergy/backend/issues"
+  },
+  "homepage": "https://github.com/hotel-synergy/backend#readme"
+}
