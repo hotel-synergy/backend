@@ -9,7 +9,7 @@ const setupRouter = require('./routes/v1/setup');
 const app = express();
 require('dotenv').config();
 
-const customHeaders = (req, res,next) => {
+const customHeaders = (req, res, next) => {
   app.disable('x-powered-by');
   res.setHeader('X-powered-by', "Hotel Synergy");
   next();
@@ -17,10 +17,10 @@ const customHeaders = (req, res,next) => {
 
 //connect to db first
 mongoose.connect(process.env.DB_URI).then(() => {
-    console.log('DB Connected successfully.');
-    app.listen(process.env.SERVER_PORT, () => {
-        console.log(`Application started and listening on port ${process.env.SERVER_PORT}`);
-    })
+  console.log('DB Connected successfully.');
+  app.listen(process.env.SERVER_PORT, () => {
+    console.log(`Application started and listening on port ${process.env.SERVER_PORT}`);
+  })
 });
 
 //middlewares
@@ -34,7 +34,7 @@ app.use(cookieParser());
 
 //API v1 endpoints.
 app.use('/v1/setup', setupRouter);
-app.use('/v1/auth',checkConfig, authRouter);
+app.use('/v1/auth', checkConfig, authRouter);
 app.use('/v1/admin', checkConfig, adminRouter);
 
 

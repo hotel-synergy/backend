@@ -19,7 +19,7 @@ companyname, for the company now.(TODO: add something later on.)
         if (prevCompany) {
             return res.status(400).json({ msg: 'The software is already configured and can not be reconfigured.' });
         }
-        const { companyName, fullName, email, password, username } = req.body;
+        const { companyName, fullName, email, password } = req.body;
         if (!companyName || !fullName || !email || !password || !username) {
             return res.status(400).json({msg: 'Please provide all the information to complete the setup.'})
         }
@@ -40,7 +40,6 @@ companyname, for the company now.(TODO: add something later on.)
 
         //creating new user
         const newUser = await new User({
-            username,
             fullName,
             password: hashedPassword,
             email,
@@ -73,4 +72,15 @@ companyname, for the company now.(TODO: add something later on.)
     }
 }
 
-module.exports = setupAdminAndCompany;
+const getSetupStatus = async (req, res) => {
+    try {
+        const companyList = await company.find({});
+        if (companyList.length == 0) {
+            return res.status(200).json({ msg: 'Software needs to be configured.'});
+        } else res.status(400).json({msg: 'Software already configured.'});
+    } catch (err) {
+        res.status(500).json({msg: 'Unknown server error'})
+    }
+}
+
+module.exports = {setupAdminAndCompany, getSetupStatus};
