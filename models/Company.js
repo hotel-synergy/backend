@@ -4,13 +4,13 @@ const companySchema = new mongoose.Schema({
     name: {
         type: String,
     },
-    contact: {
+    contact1: {
         type: String,
     },
-    website: {
+    contact2: {
         type: String,
     },
-    email: {
+    address: {
         type: String,
     }
 })
