@@ -25,25 +25,25 @@ const SendPasswordResetEmail = async (link_token, email, name = 'user') => {
     }
 
     try {
-    await transporter.sendMail(mailOptions);
-    return true
+        await transporter.sendMail(mailOptions);
+        return true
     } catch (err) {
         console.log(err);
         return false
     }
 }
 
-const SendEmailVerificationLink = async (link_token,email, name) => {
+const SendEmailVerificationLink = async (link_token, email, name) => {
     //sending email verification 
-      const mailOptions = {
+    const mailOptions = {
         from: process.env.HOTEL_SOFTWARE_EMAIL.toString(),
         to: email,
         subject: `Verify your email address - ${process.env.HOTEL_NAME.toString()}`,
         html: `<p>Hello, <strong>${name}</strong>! <p>Welcome to ${process.env.HOTEL_NAME.toString()}. You have received this email because either you or your admin added a new account with this email to the system.<br/>Please click the link below to confirm your email address, if you think you were not supposed to receive this email, please leave it. </p>
-        <a href="http://${process.env.FRONTEND_URL.toString()}/auth/verifyEmail?token=${link_token}">Click here verify your email</a><br/><br/>
+        <a href="http://${process.env.FRONTEND_URL.toString()}/auth/verifyEmail?token=${link_token}">Click here to verify your email</a><br/><br/>
          <p>If you can not click the link above please copy and paste the following link:<br/><a href="https://${process.env.FRONTEND_URL.toString()}/auth/verifyEmail?token=${link_token}">https://${process.env.FRONTEND_URL.toString()}/auth/verifyEmail?token=${link_token}</a></p>
         Cheers!<br/>
-        ${process.env.HOTEL_NAME.toString()} team
+        ${process.env.HOTEL_NAME.toString()} Team
         <p>Powered by <a href="https://www.hotel-synergy.net/">Hotel Synergy</a></p>
         `
     }
@@ -56,4 +56,4 @@ const SendEmailVerificationLink = async (link_token,email, name) => {
     }
 }
 
-module.exports = {SendEmailVerificationLink, SendPasswordResetEmail}
+module.exports = { SendEmailVerificationLink, SendPasswordResetEmail }

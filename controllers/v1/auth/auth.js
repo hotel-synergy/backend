@@ -20,7 +20,7 @@ const loginUser = async (req, res) => {
     //validate user ID
     const isValidEmail = validateEmail(email);
     if (!isValidEmail) {
-        return res.status(400).json({msg: 'The email provided is invalid.'})
+        return res.status(400).json({ msg: 'The email provided is invalid.' })
     }
 
     //get user from DB
@@ -34,7 +34,12 @@ const loginUser = async (req, res) => {
     const passwordMatched = await bcrypt.compare(password, userInDB.password);
     if (!passwordMatched) {
         //Password did not matched.
-        return res.status(400).json({msg: 'Wrong password, please try again later.'});
+        return res.status(400).json({ msg: 'Wrong password, please try again later.' });
+    }
+
+
+    if (!userInDB.verified) {
+        return res.status(400).json({ msg: 'Please verify your email before login.' })
     }
 
     //generate a login token valid for 1 hour.
@@ -56,8 +61,9 @@ const loginUser = async (req, res) => {
             username: userInDB.username,
             picture: userInDB.image,
             role: userInDB.role
-    } });
-  
+        }
+    });
+
 }
 
 const resetUserPassword = async (req, res) => {
@@ -92,12 +98,12 @@ const resetUserPassword = async (req, res) => {
 
 
     //sending a new email with password reset link
-    const isMailSent = await SendPasswordResetEmail(linkToken, userInDB.email,userInDB.fullName);
-    if (!isMailSent) { 
+    const isMailSent = await SendPasswordResetEmail(linkToken, userInDB.email, userInDB.fullName);
+    if (!isMailSent) {
         console.log(isMailSent)
         return res.status(500).json({ msg: 'There was an error sending email to your inbox, please contact admin' });
     }
-    
+
     return res.status(200).json({ msg: 'Password reset email sent successfully.' });
 }
 
@@ -108,7 +114,7 @@ const setNewPasswordAfterReset = async (req, res) => {
     if (!token) {
         return res.status(401).json({ msg: 'Token is missing.' });
     }
-    
+
     //see if the token is valid.
     const isValidToken = await jwt.verify(token, process.env.JWT_SECRET.toString(), {
         algorithms: 'HS256'
@@ -116,22 +122,22 @@ const setNewPasswordAfterReset = async (req, res) => {
     if (!isValidToken) {
         return res.status(401).json({ msg: 'The provided token is not valid.' })
     }
-    
+
     //get token data
     const jwtData = await parseJwt(token);
     const _id = jwtData._id;
 
     const userInDb = await User.findOne({ _id });
     if (token !== userInDb.tokenMailed) {
-        return res.status(401).json({msg: 'That token is expired or no longer avilable.'})
+        return res.status(401).json({ msg: 'That token is expired or no longer avilable.' })
     }
 
 
 
     //hash the new pasword
     const hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.BCRYPT_SALT));
-    
-    
+
+
     //find the user and update the password
     const updatedUser = await User.findOneAndUpdate({ _id }, {
         password: hashedPassword,
@@ -139,11 +145,41 @@ const setNewPasswordAfterReset = async (req, res) => {
     });
 
     if (!updatedUser) {
-        return res.status(404).json({msg: 'That user was not found.'})
+        return res.status(404).json({ msg: 'That user was not found.' })
     }
 
-    return res.status(200).json({msg: 'Password updated successfully.'})
+    return res.status(200).json({ msg: 'Password updated successfully.' })
 }
 
+const verifyUserEmailAddress = async (req, res) => {
+    const { token } = req.body;
+    if (!token) {
+        return res.status(400).json({ msg: 'Not a valid verification link.' });
+    }
 
-module.exports = {loginUser, resetUserPassword, setNewPasswordAfterReset}
+    // HOW TO SEE IF THE TOKEN IS VALID?
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET.toString(), {
+            algorithms: "HS256"
+        });
+        const userInDb = await User.findOne({ _id: decoded._id });
+        if (!userInDb) {
+            return res.status(404).json({ msg: 'User for that token is not found.' });
+        }
+        if (userInDb.tokenMailed !== token) {
+            return res.status(400).json({ msg: 'The provided token is not valid.' })
+        }
+        const updatedUser = await User.findOneAndUpdate({ _id: userInDb._id }, {
+            verified: true,
+            tokenMailed: 'none'
+        });
+
+        return res.status(200).json({ msg: 'The email address was verified successfully.' });
+    } catch (err) {
+        return res.status(400).json({ msg: "Invalid verification token." })
+    }
+
+
+}
+
+module.exports = { loginUser, resetUserPassword, setNewPasswordAfterReset, verifyUserEmailAddress }
