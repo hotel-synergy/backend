@@ -58,7 +58,7 @@ const addMenu = async (req, res) => {
       name,
       image: "demo",
       price: Number(price),
-      category,
+      category: find_category._id,
       description,
     });
 
@@ -66,6 +66,7 @@ const addMenu = async (req, res) => {
 
     return res.status(200).json({ msg: "Menu added successfully." });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .json({ msg: "There was an unknown error adding new menu" });

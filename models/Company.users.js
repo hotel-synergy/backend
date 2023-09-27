@@ -1,4 +1,4 @@
-const mongoose = require('mongoose'); 
+const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -21,14 +21,14 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    },
+  },
   image: {
-      type: String,
-      default: 'user.png'
+    type: String,
+    default: "user.png",
   },
   role: {
-      type: String,
-      default: 'admin'
+    type: String,
+    default: "admin",
   },
   verified: {
     type: Boolean,
@@ -39,17 +39,16 @@ const userSchema = new mongoose.Schema({
   //token mailed will be used for email verification or password reset
   tokenMailed: {
     type: String,
-    default: 'none',
+    default: "none",
   },
 
   //auth Token to keep the currently logged in token.
   authToken: {
     type: String,
-    default: 'none',
+    default: "none",
   },
-  
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("COMPANY_users", userSchema, "COMPANY_users");
 
 module.exports = User;

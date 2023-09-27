@@ -7,7 +7,8 @@ const restaurantMenuitem = mongoose.Schema({
     type: Number,
   },
   category: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "RESTAURANT_menu_category",
   },
   description: {
     type: String,

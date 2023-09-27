@@ -1,4 +1,6 @@
+const { isValidObjectId } = require("mongoose");
 const RestaurantMenu_category = require("../../../models/Restaurant.menu_category");
+const RestaurantMenu_item = require("../../../models/Restaurant.menu_item");
 
 const getAllMenuCategory = async (req, res) => {
   try {
@@ -24,6 +26,11 @@ const deleteMenuCategory = async (req, res) => {
         .status(400)
         .json({ msg: "The category ID to delete is required." });
     }
+    if (!isValidObjectId(_id)) {
+      return res
+        .status(400)
+        .json({ msg: "Please provide a valid menu category ID." });
+    }
     const deletedItem = await RestaurantMenu_category.findOneAndDelete({
       _id,
     });
@@ -32,6 +39,8 @@ const deleteMenuCategory = async (req, res) => {
         .status(404)
         .json({ msg: "That item was not found to delete." });
     }
+
+    await RestaurantMenu_item.deleteMany({ category: deletedItem._id });
     return res.status(200).json({ msg: "Category deleted successfully." });
   } catch (err) {
     return res.status(500).json({ msg: "There was an internal server error." });
