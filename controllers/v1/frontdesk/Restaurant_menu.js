@@ -29,6 +29,14 @@ const deleteMenu = async (req, res) => {
         .status(404)
         .json({ msg: "That menu was not found to delete." });
     }
+    const updateCategory = await RestaurantMenu_category.findOneAndUpdate(
+      {
+        _id: deleteMenu.category,
+      },
+      {
+        $inc: { items: -1 },
+      }
+    );
     return res.status(200).json({ msg: "Menu item deleted successfully." });
   } catch (err) {
     console.log(err);
@@ -63,6 +71,14 @@ const addMenu = async (req, res) => {
     });
 
     await newMenu.save();
+    const updatedCategory = await RestaurantMenu_category.findOneAndUpdate(
+      {
+        _id: category,
+      },
+      {
+        $inc: { items: +1 },
+      }
+    );
 
     return res.status(200).json({ msg: "Menu added successfully." });
   } catch (err) {
