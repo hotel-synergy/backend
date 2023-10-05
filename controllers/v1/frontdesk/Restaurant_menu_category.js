@@ -68,6 +68,7 @@ const addMenuCategory = async (req, res) => {
 const updateMenuCategory = async (req, res) => {
   try {
     const { _id, name, description } = req.body;
+    console.log(req.body);
     if (!_id || !name || !description) {
       return res.status(400).json({ msg: "All information is required." });
     }

@@ -98,10 +98,26 @@ const updateMenu = async (req, res) => {
   if (!menuItem) {
     return res.status(404).json({ msg: "That menu item was not found." });
   }
-  const existingCategory = await RestaurantMenu_category.findOne({
-    _id: category,
-  });
-  if (!existingCategory) {
+  //decrase old category item count
+  const oldCategory = await RestaurantMenu_category.findOneAndUpdate(
+    {
+      _id: menuItem.category,
+    },
+    {
+      $inc: { items: -1 },
+    }
+  );
+
+  //see if new category exists and increase item count.
+  const newCategory = await RestaurantMenu_category.findOneAndUpdate(
+    {
+      _id: category,
+    },
+    {
+      $inc: { items: 1 },
+    }
+  );
+  if (newCategory === null) {
     return res.status(400).json({ msg: "The new category is invalid." });
   }
   const updatedItem = await RestaurantMenu_item.findOneAndUpdate(
