@@ -1,5 +1,5 @@
 const { isValidObjectId } = require("mongoose");
-const { RestaurantTables } = require("../../../models/Restaurant.tables");
+const RestaurantTables = require("../../../models/Restaurant.tables");
 
 const addTable = async (req, res) => {
   try {
@@ -23,7 +23,7 @@ const addTable = async (req, res) => {
 const getTables = async (req, res) => {
   try {
     const tables = await RestaurantTables.find({});
-    if ((tables.length = 0)) {
+    if (!tables.length >= 1) {
       return res.status(400).json({ msg: "There are no tables found." });
     }
     return res.status(200).json({ tables });
@@ -59,6 +59,10 @@ const deleteTable = async (req, res) => {
 const editTable = async (req, res) => {
   try {
     const { _id, name, capacity } = req.body;
+    const isValid = isValidObjectId(_id);
+    if (!isValid) {
+      return res.status(400).json({ msg: "Please provide a valid table ID" });
+    }
     const updatedTable = await RestaurantTables.findOneAndUpdate(
       { _id },
       {
